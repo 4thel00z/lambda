@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	λ "github.com/4thel00z/lambda/v1"
+	"os"
 )
 
 func main() {
-	fmt.Print(λ.Open("lorem_ipsum.txt").Slurp().ToString().UnwrapString())
+	λ.Open("lorem_ipsum.txt").Slurp().WriteString(os.Stdout)
 }
