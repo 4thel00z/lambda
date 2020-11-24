@@ -1,0 +1,6 @@
+{
+  "name": "Fire spell",
+  "attack_power": 123.0,
+  "type": "fire",
+  "description": "A mighty fire ball that burns down everything to ashes"
+}
