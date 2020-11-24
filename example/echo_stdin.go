@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	fmt.Print(string(λ.Slurp(os.Stdin).UnwrapBytes()))
+	fmt.Print(λ.Slurp(os.Stdin).UnwrapString())
 }
