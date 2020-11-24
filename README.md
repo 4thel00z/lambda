@@ -7,7 +7,8 @@
 
 ## Example usage
 
-This demonstrates how you can use lambda in your code: 
+
+### Read all lines from stdin
 
 ```go
 package main
@@ -19,7 +20,50 @@ import (
 )
 
 func main() {
-	fmt.Print(string(λ.Slurp(os.Stdin).UnwrapBytes()))
+	content := λ.Slurp(os.Stdin).UnwrapString()
+	// do things with content...
+}
+
+
+```
+
+### Read a file and pipe it to stdout
+
+```go
+package main
+
+import (
+	λ "github.com/4thel00z/lambda/v1"
+	"os"
+)
+
+func main() {
+	λ.Open("lorem_ipsum.txt").Slurp().WriteString(os.Stdout)
+}
+```
+
+### Read a JSON file into a struct
+
+```go
+package main
+
+import (
+	λ "github.com/4thel00z/lambda/v1"
+	"strings"
+)
+
+type MagicSpell struct {
+	Name        string  `json:"name"`
+	AttackPower float64 `json:"attack_power"`
+	Type        string  `json:"type"`
+	Description string  `json:"description"`
+}
+
+func main() {
+	var (
+		m MagicSpell
+	)
+	λ.Open("magic.json").Slurp().JSON(&m).Catch(λ.Die)
 }
 
 ```
