@@ -22,6 +22,13 @@ func (o Option) Unwrap() interface{} {
 	return o.value
 }
 
+func (o Option) UnwrapBytes() []byte {
+	if o.err != nil {
+		panic(o.err)
+	}
+	return o.value.([]byte)
+}
+
 func (o Option) Catch(e ErrorHandler) interface{} {
 	if o.err != nil {
 		e(o.err)
