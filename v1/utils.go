@@ -2,5 +2,7 @@ package v1
 
 import "log"
 
-func Die(err error) { log.Fatalln(err) }
-func Ignore(error)  {}
+// Some convenience ErrorHandler
+
+func Die(err error) error { log.Fatalln(err); return nil }
+func Ignore(error) error  { return nil }

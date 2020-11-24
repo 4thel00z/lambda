@@ -11,7 +11,7 @@ type Option struct {
 }
 
 type Producer func(o Option) interface{}
-type ErrorHandler func(err error)
+type ErrorHandler func(err error) error
 
 func (o Option) Or(i interface{}) interface{} {
 	if o.err != nil {
@@ -66,12 +66,14 @@ func (o Option) UnwrapString() string {
 	return string(o.UnwrapBytes())
 }
 
-func (o Option) Catch(e ErrorHandler) interface{} {
+func (o Option) Catch(e ErrorHandler) Option {
 	if o.err != nil {
-		e(o.err)
-		return nil
+		return Option{
+			value: o.value,
+			err:   e(o.err),
+		}
 	}
-	return o.value
+	return o
 }
 
 func (o Option) Close() Option {
