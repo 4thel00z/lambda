@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"io"
 )
 
@@ -62,7 +63,7 @@ func (o Option) UnwrapString() string {
 	if o.err != nil {
 		panic(o.err)
 	}
-	return o.value.(string)
+	return string(o.UnwrapBytes())
 }
 
 func (o Option) Catch(e ErrorHandler) interface{} {
@@ -78,4 +79,29 @@ func (o Option) Close() Option {
 		o.err = o.value.(io.Closer).Close()
 	}
 	return o
+}
+
+func (o Option) Write(w io.Writer) Option {
+	_, err := w.Write(o.UnwrapBytes())
+	return Option{
+		value: o.value,
+		err:   err,
+	}
+}
+
+func (o Option) WriteString(w io.StringWriter) Option {
+	_, err := w.WriteString(o.UnwrapString())
+	return Option{
+		value: o.value,
+		err:   err,
+	}
+}
+
+func (o Option) JSON(i interface{}) Option {
+	b := o.UnwrapBytes()
+	err := json.Unmarshal(b, &i)
+	return Option{
+		value: i,
+		err:   err,
+	}
 }
