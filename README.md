@@ -26,7 +26,8 @@ func main() {
 
 ## Todo
 
-* TBD
+* Make Option more flexible an pretty
+* Add methods for handling conditionals 
 
 ## License
 
