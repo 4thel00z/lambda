@@ -1,4 +1,4 @@
-package lambda
+package v1
 
 type Option struct {
 	value interface{}
