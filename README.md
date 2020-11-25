@@ -68,10 +68,31 @@ func main() {
 
 ```
 
+### Functional conditionals
+
+You never need to check an error with an if clause again. Instead you can define the flow as functional chain,
+start point is always `λ.If`.
+You even can reuse the same chain, it doesn't contain data. You pass the data via `Conditional.Do`.
+
+```go
+package main
+
+import (
+	λ "github.com/4thel00z/lambda/v1"
+)
+
+func main() {
+	manipulateError := λ.Return(λ.Wrap(nil, λ.Error("this error will be thrown")))
+	input := λ.Wrap(nil, λ.Error("something is weird"))
+	output := λ.If(λ.HasError, manipulateError).Else(λ.Cry).Do(input)
+	λ.If(λ.HasNoError, λ.Identity).Else(λ.Cry).Do(output)
+}
+
+```
+
 ## Todo
 
 * Make Option more flexible an pretty
-* Add methods for handling conditionals 
 
 ## License
 
