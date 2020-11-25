@@ -11,7 +11,30 @@ type Option struct {
 }
 
 type Producer func(o Option) interface{}
+type Transformer func(o Option) Option
+
 type ErrorHandler func(err error) error
+
+func Return(option Option) Transformer {
+	return func(o Option) Option {
+		return option
+	}
+}
+
+func Wrap(i interface{}, err error) Option {
+	return Option{
+		value: i,
+		err:   err,
+	}
+}
+
+func (o Option) Error() error {
+	return o.err
+}
+
+func (o Option) Value() interface{} {
+	return o.value
+}
 
 func (o Option) Or(i interface{}) interface{} {
 	if o.err != nil {
