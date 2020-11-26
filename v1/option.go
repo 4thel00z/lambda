@@ -77,7 +77,7 @@ func (o Option) Slurp() Option {
 		return Slurp(o.value.(http.Response).Body)
 	}
 
-	return WrapError(fmt.Errorf("couldn't slurp %s", o))
+	return WrapError(fmt.Errorf("couldn't slurp %#v", o))
 }
 
 func (o Option) ToString() Option {
