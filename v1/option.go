@@ -2,7 +2,9 @@ package v1
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"net/http"
 )
 
 type Option struct {
@@ -28,6 +30,17 @@ func Wrap(i interface{}, err error) Option {
 	}
 }
 
+func WrapValue(i interface{}) Option {
+	return Option{
+		value: i,
+	}
+}
+
+func WrapError(err error) Option {
+	return Option{
+		err: err,
+	}
+}
 func (o Option) Error() error {
 	return o.err
 }
@@ -53,8 +66,18 @@ func (o Option) Slurp() Option {
 	if o.err != nil {
 		return o
 	}
-	return Slurp(o.value.(io.ReadCloser))
+	switch o.value.(type) {
+	case io.ReadCloser:
+		return Slurp(o.value.(io.ReadCloser))
+	case io.Reader:
+		return Read(o.value.(io.Reader))
+	case *http.Response:
+		return Slurp(o.value.(*http.Response).Body)
+	case http.Response:
+		return Slurp(o.value.(http.Response).Body)
+	}
 
+	return WrapError(fmt.Errorf("couldn't slurp %s", o))
 }
 
 func (o Option) ToString() Option {
