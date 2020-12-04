@@ -1,10 +1,12 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 )
 
 type Option struct {
@@ -135,6 +137,27 @@ func (o Option) Write(w io.Writer) Option {
 		value: o.value,
 		err:   err,
 	}
+}
+
+func (o Option) CopyToWriter(w io.Writer) Option {
+	if o.err != nil {
+		return o
+	}
+	switch o.value.(type) {
+
+	case io.Reader:
+		_, err := io.Copy(w, o.value.(io.Reader))
+		return Wrap(o.value, err)
+
+	case http.Response:
+		_, err := io.Copy(w, o.value.(http.Response).Body)
+		return Wrap(o.value, err)
+	case []byte:
+		_, err := io.Copy(w, bytes.NewReader(o.value.([]byte)))
+		return Wrap(o.value, err)
+	}
+
+	return Wrap(o.value, fmt.Errorf("could not handle value of %s type yet", reflect.TypeOf(o.value).Name()))
 }
 
 func (o Option) WriteString(w io.StringWriter) Option {

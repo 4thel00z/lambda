@@ -164,5 +164,4 @@ func (o Option) Do() Option {
 	r := o.value.(request)
 	res, err := r.client.Do(r.req)
 	return Wrap(res, err)
-
 }
