@@ -35,3 +35,11 @@ func Open(path string) Option {
 		err:   err,
 	}
 }
+
+func Create(path string) Option {
+	f, err := os.Create(path)
+	return Option{
+		value: f,
+		err:   err,
+	}
+}

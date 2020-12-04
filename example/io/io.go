@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	λ.Open("lorem_ipsum.txt").Slurp().WriteString(os.Stdout)
+	λ.Open("lorem_ipsum.txt").Slurp().WriteStringTo(os.Stdout)
 }

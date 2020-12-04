@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	λ.Get("https://ransomware.host").Do().Slurp().WriteString(os.Stdout)
+	λ.Get("https://ransomware.host").Do().Slurp().WriteStringTo(os.Stdout)
 }

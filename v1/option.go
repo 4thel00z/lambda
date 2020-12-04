@@ -131,7 +131,7 @@ func (o Option) Close() Option {
 	return o
 }
 
-func (o Option) Write(w io.Writer) Option {
+func (o Option) WriteTo(w io.Writer) Option {
 	_, err := w.Write(o.UnwrapBytes())
 	return Option{
 		value: o.value,
@@ -149,18 +149,18 @@ func (o Option) CopyToWriter(w io.Writer) Option {
 		_, err := io.Copy(w, o.value.(io.Reader))
 		return Wrap(o.value, err)
 
-	case http.Response:
+	case *http.Response:
 		_, err := io.Copy(w, o.value.(http.Response).Body)
 		return Wrap(o.value, err)
 	case []byte:
 		_, err := io.Copy(w, bytes.NewReader(o.value.([]byte)))
 		return Wrap(o.value, err)
-	}
 
+	}
 	return Wrap(o.value, fmt.Errorf("could not handle value of %s type yet", reflect.TypeOf(o.value).Name()))
 }
 
-func (o Option) WriteString(w io.StringWriter) Option {
+func (o Option) WriteStringTo(w io.StringWriter) Option {
 	_, err := w.WriteString(o.UnwrapString())
 	return Option{
 		value: o.value,
