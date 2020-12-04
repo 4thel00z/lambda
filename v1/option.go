@@ -150,7 +150,7 @@ func (o Option) CopyToWriter(w io.Writer) Option {
 		return Wrap(o.value, err)
 
 	case *http.Response:
-		_, err := io.Copy(w, o.value.(http.Response).Body)
+		_, err := io.Copy(w, o.value.(*http.Response).Body)
 		return Wrap(o.value, err)
 	case []byte:
 		_, err := io.Copy(w, bytes.NewReader(o.value.([]byte)))
