@@ -108,20 +108,20 @@ func (o Option) UnwrapBytes() []byte {
 	return o.value.([]byte)
 }
 
-func (o Option) UnwrapChecksum() [sha256.Size]byte {
+func (o Option) UnwrapChecksum() string {
 	if o.err != nil {
 		panic(o.err)
 	}
-	return o.value.([sha256.Size]byte)
+	return fmt.Sprintf("%x", o.value.([sha256.Size]byte))
 }
 
-func (o Option) Unwrap224Checksum() [sha256.Size224]byte {
+func (o Option) Unwrap224Checksum() string {
 	if o.err != nil {
 		panic(o.err)
 	}
-	return o.value.([sha256.Size224]byte)
-}
+	return fmt.Sprintf("%x", o.value.([sha256.Size224]byte))
 
+}
 
 func (o Option) UnwrapString() string {
 	if o.err != nil {
