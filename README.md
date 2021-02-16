@@ -107,7 +107,7 @@ func main() {
 
 ### Simple AES-CBC encryption with PKC7 Padding
 
-```
+```go
 package main
 
 import (
