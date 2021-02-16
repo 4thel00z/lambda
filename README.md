@@ -1,7 +1,7 @@
 # λ
 
 ![lambda-tests](https://github.com/4thel00z/lambda/workflows/Test/badge.svg)
-![lambda-logo](https://raw.githubusercontent.com/4thel00z/lambda/assets/logo.svg)
+![lambda-logo](https://raw.githubusercontent.com/4thel00z/lambda/master/logo.png)
 
 λ is a functional programming framework for go, which adds support for an alternative error handling workflow using options.
 
