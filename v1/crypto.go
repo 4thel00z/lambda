@@ -23,10 +23,7 @@ func RemovePKCS7Padding(origData []byte) []byte {
 func (o Option) Encrypt(key []byte) Option {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return Option{
-			value: o.value,
-			err:   err,
-		}
+		return Wrap(o.value, err)
 	}
 
 	blockSize := block.BlockSize()
@@ -34,10 +31,7 @@ func (o Option) Encrypt(key []byte) Option {
 	dst := make([]byte, blockSize+len(src))
 	iv := dst[:blockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return Option{
-			value: o.value,
-			err:   err,
-		}
+		return Wrap(o.value, err)
 	}
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(dst[blockSize:], src)
@@ -55,7 +49,7 @@ func (o Option) Decrypt(key []byte) Option {
 	}
 	src := o.UnwrapBytes()
 	srcCopy := make([]byte, len(src))
-	copy(srcCopy,src)
+	copy(srcCopy, src)
 
 	blockSize := block.BlockSize()
 
