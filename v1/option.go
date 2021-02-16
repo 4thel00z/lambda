@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -106,6 +107,21 @@ func (o Option) UnwrapBytes() []byte {
 	}
 	return o.value.([]byte)
 }
+
+func (o Option) UnwrapChecksum() [sha256.Size]byte {
+	if o.err != nil {
+		panic(o.err)
+	}
+	return o.value.([sha256.Size]byte)
+}
+
+func (o Option) Unwrap224Checksum() [sha256.Size224]byte {
+	if o.err != nil {
+		panic(o.err)
+	}
+	return o.value.([sha256.Size224]byte)
+}
+
 
 func (o Option) UnwrapString() string {
 	if o.err != nil {
