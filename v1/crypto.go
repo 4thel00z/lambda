@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"errors"
 	"io"
 )
@@ -74,4 +75,12 @@ func (o Option) Decrypt(key []byte) Option {
 		value: RemovePKCS7Padding(srcCopy),
 		err:   nil,
 	}
+}
+
+func (o Option) Checksum() Option {
+	return Wrap(sha256.Sum256(o.UnwrapBytes()), nil)
+}
+
+func (o Option) Checksum224() Option {
+	return Wrap(sha256.Sum224(o.UnwrapBytes()), nil)
 }
