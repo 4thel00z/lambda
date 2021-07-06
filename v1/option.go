@@ -192,3 +192,20 @@ func (o Option) JSON(i interface{}) Option {
 		err:   err,
 	}
 }
+
+func (o Option) ToJSON() Option {
+	val := o.Value()
+	var (
+		b []byte
+		err error
+	)
+	if reflect.ValueOf(val).Kind() == reflect.Ptr {
+		b, err = json.Marshal(val)
+	} else {
+		b, err = json.Marshal(&val)
+	}
+	return Option{
+		value: b,
+		err:   err,
+	}
+}
