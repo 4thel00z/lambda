@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/base64"
 	"io"
 	"net/http"
 )
@@ -109,6 +110,21 @@ func (o Option) AddHeader(k, v string) Option {
 	o.value = r
 	return o
 }
+
+func (o Option) BasicAuth(user, password string) Option {
+	if o.err != nil {
+		return o
+	}
+	r := o.value.(request)
+	auth := []byte(user)
+	auth = append(auth, []byte(":")...)
+	auth = append(auth, []byte(password)...)
+	// This is fine, as long this request never leaves this option
+	r.req.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString(auth))
+	o.value = r
+	return o
+}
+
 func (o Option) SetHeader(k, v string) Option {
 	if o.err != nil {
 		return o
