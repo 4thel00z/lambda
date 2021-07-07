@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"reflect"
+	"strings"
 )
 
 type Option struct {
@@ -108,6 +109,14 @@ func (o Option) UnwrapBytes() []byte {
 	return o.value.([]byte)
 }
 
+func (o Option) UnwrapBytesReader() io.Reader {
+	return bytes.NewReader(o.UnwrapBytes())
+}
+
+func (o Option) UnwrapStringReader() io.Reader {
+	return strings.NewReader(o.UnwrapString())
+}
+
 func (o Option) UnwrapChecksum() string {
 	if o.err != nil {
 		panic(o.err)
@@ -196,7 +205,7 @@ func (o Option) JSON(i interface{}) Option {
 func (o Option) ToJSON() Option {
 	val := o.Value()
 	var (
-		b []byte
+		b   []byte
 		err error
 	)
 	if reflect.ValueOf(val).Kind() == reflect.Ptr {
