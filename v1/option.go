@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -136,6 +137,11 @@ func (o Option) UnwrapString() string {
 	if o.err != nil {
 		panic(o.err)
 	}
+
+	if s, ok := o.value.(string); ok {
+		return s
+	}
+
 	return string(o.UnwrapBytes())
 }
 
@@ -154,6 +160,57 @@ func (o Option) Close() Option {
 		o.err = o.value.(io.Closer).Close()
 	}
 	return o
+}
+
+func (o Option) WriteFromReader(r io.Reader) Option {
+	toWrite, err := io.ReadAll(r)
+	if err != nil {
+		return Option{
+			value: o.value,
+			err:   err,
+		}
+	}
+	w, ok := o.value.(io.Writer)
+	if !ok {
+		return Option{
+			value: o.value,
+			err:   errors.New("option is not a writer"),
+		}
+	}
+	_, err = w.Write(toWrite)
+
+	return Option{
+		value: o.value,
+		err:   err,
+	}
+}
+func (o Option) WriteFromBytes(toWrite []byte) Option {
+	w, ok := o.value.(io.Writer)
+	if !ok {
+		return Option{
+			value: o.value,
+			err:   errors.New("option is not a writer"),
+		}
+	}
+	_, err := w.Write(toWrite)
+
+	return Option{
+		value: o.value,
+		err:   err,
+	}
+}
+
+func (o Option) WriteFromString(toWrite string) Option {
+	w, ok := o.value.(io.StringWriter)
+	if !ok {
+		return o.WriteFromBytes([]byte(toWrite))
+	}
+	_, err := w.WriteString(toWrite)
+
+	return Option{
+		value: o.value,
+		err:   err,
+	}
 }
 
 func (o Option) WriteTo(w io.Writer) Option {
