@@ -234,10 +234,6 @@ fmt.Print(out)
 }
 ```
 
-## Todo
-
-* Make Option more flexible an pretty
-
 ## License
 
 This project is licensed under the GPL-3 license.
