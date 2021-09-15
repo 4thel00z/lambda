@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"reflect"
 	"strings"
@@ -98,14 +99,14 @@ func (o Option) ToString() Option {
 
 func (o Option) Unwrap() interface{} {
 	if o.err != nil {
-		panic(o.err)
+		log.Fatal(o.err)
 	}
 	return o.value
 }
 
 func (o Option) UnwrapBytes() []byte {
 	if o.err != nil {
-		panic(o.err)
+		log.Fatal(o.err)
 	}
 	return o.value.([]byte)
 }
@@ -120,14 +121,14 @@ func (o Option) UnwrapStringReader() io.Reader {
 
 func (o Option) UnwrapChecksum() string {
 	if o.err != nil {
-		panic(o.err)
+		log.Fatal(o.err)
 	}
 	return fmt.Sprintf("%x", o.value.([sha256.Size]byte))
 }
 
 func (o Option) Unwrap224Checksum() string {
 	if o.err != nil {
-		panic(o.err)
+		log.Fatal(o.err)
 	}
 	return fmt.Sprintf("%x", o.value.([sha256.Size224]byte))
 
@@ -135,7 +136,7 @@ func (o Option) Unwrap224Checksum() string {
 
 func (o Option) UnwrapString() string {
 	if o.err != nil {
-		panic(o.err)
+		log.Fatal(o.err)
 	}
 
 	if s, ok := o.value.(string); ok {

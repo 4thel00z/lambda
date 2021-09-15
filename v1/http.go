@@ -1,7 +1,5 @@
 package v1
 
-// TODO: Use a copy everywhere a request is manipulated inplace
-
 import (
 	"encoding/base64"
 	"io"
