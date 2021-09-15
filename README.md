@@ -147,7 +147,7 @@ func getRandomKey() []byte {
 }
 func main() {
 	key := getRandomKey()
-	if λ.Read(loremIpsumReader).Encrypt(key).Decrypt(key).UnwrapString() != loremIpsum {
+	if λ.Read(loremIpsumReader).EncryptAES(key).DecryptAES(key).UnwrapString() != loremIpsum {
 		panic("encryption and decryption doesn't work")
 	}
 
@@ -156,7 +156,7 @@ func main() {
 		key = getRandomKey()
 		o := λ.Read(io.LimitReader(rand.Reader, 1024))
 		text := o.UnwrapString()
-		if o.Encrypt(key).Decrypt(key).UnwrapString() != text {
+		if o.EncryptAES(key).DecryptAES(key).UnwrapString() != text {
 			panic("encryption and decryption doesn't work")
 		}
 	}
