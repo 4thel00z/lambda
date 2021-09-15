@@ -166,7 +166,7 @@ func main() {
 
 ## Pubkey cryptography
 
-```
+```go
 package main
 
 import (
