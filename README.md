@@ -176,6 +176,8 @@ import (
 
 func main() {
 	rsa := λ.RSA(4096)
+	println(rsa.ToPublicKeyPemString())
+	println(rsa.ToPrivateKeyPemString())
 	original := "Some important message which needs to stay secret lel"
 	secretMsg := rsa.EncryptRSA(original).UnwrapString()
 	if original == secretMsg {
