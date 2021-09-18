@@ -103,8 +103,8 @@ func LoadRSA(pub, private []byte) Option {
 }
 
 type RSAKeyPair struct {
-	Private *rsa.PrivateKey
-	Public  *rsa.PublicKey
+	Private *rsa.PrivateKey `json:"private"`
+	Public  *rsa.PublicKey `json:"public"`
 }
 
 // RSA generates a new key pair
