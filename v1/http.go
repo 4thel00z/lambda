@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/base64"
+	"errors"
 	"io"
 	"net/http"
 )
@@ -11,6 +12,94 @@ type request struct {
 	client *http.Client
 }
 
+func (o Option) Get(url string) Option {
+	req, err := http.NewRequest("GET", url, nil)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Options(url string) Option {
+	req, err := http.NewRequest("OPTIONS", url, nil)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Head(url string) Option {
+	req, err := http.NewRequest("HEAD", url, nil)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Post(url string, body io.Reader) Option {
+	req, err := http.NewRequest("POST", url, body)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Connect(url string) Option {
+	req, err := http.NewRequest("CONNECT", url, nil)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Trace(url string) Option {
+	req, err := http.NewRequest("TRACE", url, nil)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Patch(url string, body io.Reader) Option {
+	req, err := http.NewRequest("PATCH", url, body)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+
+func (o Option) Put(url string, body io.Reader) Option {
+	req, err := http.NewRequest("PUT", url, body)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
+func (o Option) Delete(url string, body io.Reader) Option {
+	req, err := http.NewRequest("DELETE", url, body)
+	return Option{
+		value: request{
+			req:    req,
+			client: o.value.(request).client,
+		}, err: err,
+	}
+}
 func Get(url string) Option {
 	req, err := http.NewRequest("GET", url, nil)
 	return Option{
@@ -173,11 +262,21 @@ func (o Option) Client(c *http.Client) Option {
 
 }
 
+func Client(c *http.Client) Option {
+	return WrapValue(request{
+		req:    nil,
+		client: c,
+	})
+}
+
 func (o Option) Do() Option {
 	if o.err != nil {
 		return o
 	}
 	r := o.value.(request)
+	if r.req == nil {
+		return WrapError(errors.New("request is empty"))
+	}
 	res, err := r.client.Do(r.req)
 	return Wrap(res, err)
 }
