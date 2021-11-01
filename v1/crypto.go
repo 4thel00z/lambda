@@ -9,6 +9,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"io"
@@ -104,7 +105,7 @@ func LoadRSA(pub, private []byte) Option {
 
 type RSAKeyPair struct {
 	Private *rsa.PrivateKey `json:"private"`
-	Public  *rsa.PublicKey `json:"public"`
+	Public  *rsa.PublicKey  `json:"public"`
 }
 
 // RSA generates a new key pair
@@ -269,4 +270,24 @@ func DecryptWithPrivateKey(ciphertext []byte, key *rsa.PrivateKey) ([]byte, erro
 		return nil, err
 	}
 	return plaintext, nil
+}
+
+// FingerprintSHA256 calculates the SHA256 fingerprint of the public key part of the RSAKeyPair
+func (o Option) FingerprintSHA256() string{
+	if o.err != nil {
+		log.Fatal(o.err)
+	}
+	keyPair, ok := o.value.(RSAKeyPair)
+	if !ok {
+		log.Fatal(errors.New("could not FingerprintSHA256, because of type mismatch"))
+	}
+	content, err := PublicKeyToBytes(keyPair.Public)
+
+	if err != nil {
+		log.Fatal(errors.New("could not FingerprintSHA256, because PublicKeyToBytes did not work"))
+	}
+
+	sha256sum := sha256.Sum256(content)
+	hash := base64.RawStdEncoding.EncodeToString(sha256sum[:])
+	return "SHA256:" + hash
 }
