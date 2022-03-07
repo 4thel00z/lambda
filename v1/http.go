@@ -43,8 +43,22 @@ func (o Option) Head(url string) Option {
 	}
 }
 
-func (o Option) Post(url string, body io.Reader) Option {
-	req, err := http.NewRequest("POST", url, body)
+func (o Option) Post(url string, body interface{}) Option {
+	var (
+		reader io.Reader
+	)
+	switch body.(type) {
+	case io.Reader:
+		reader = body.(io.Reader)
+	default:
+		inner := WrapValue(body).ToJSON()
+		if inner.err != nil {
+			return Wrap(o.value, inner.err)
+		}
+		reader = inner.UnwrapBytesReader()
+	}
+
+	req, err := http.NewRequest("POST", url, reader)
 	return Option{
 		value: RequestWrapper{
 			Request: req,
