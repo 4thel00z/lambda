@@ -3,7 +3,6 @@ package v1
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -89,8 +88,8 @@ func (o Option) Slurp() Option {
 func (o Option) ToString() Option {
 	if o.err != nil {
 		return o
-
 	}
+
 	return Option{
 		value: string(o.value.([]byte)),
 		err:   o.err,
@@ -247,32 +246,6 @@ func (o Option) WriteStringTo(w io.StringWriter) Option {
 	_, err := w.WriteString(o.UnwrapString())
 	return Option{
 		value: o.value,
-		err:   err,
-	}
-}
-
-func (o Option) JSON(i interface{}) Option {
-	b := o.UnwrapBytes()
-	err := json.Unmarshal(b, &i)
-	return Option{
-		value: i,
-		err:   err,
-	}
-}
-
-func (o Option) ToJSON() Option {
-	val := o.Value()
-	var (
-		b   []byte
-		err error
-	)
-	if reflect.ValueOf(val).Kind() == reflect.Ptr {
-		b, err = json.Marshal(val)
-	} else {
-		b, err = json.Marshal(&val)
-	}
-	return Option{
-		value: b,
 		err:   err,
 	}
 }
