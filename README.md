@@ -6,6 +6,10 @@
 
 λ is a functional programming framework for go, which adds support for an alternative error handling workflow using options.
 
+## Notes
+
+This package requires at least a Go version of 1.6 to compile succesfully.
+
 ## Example usage
 
 
