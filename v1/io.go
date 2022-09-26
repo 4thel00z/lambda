@@ -8,11 +8,14 @@ import (
 
 func Slurp(r io.ReadCloser) Option {
 	content, err := ioutil.ReadAll(r)
-	defer func() {
-		if err != nil {
-			r.Close()
+	if err != nil {
+		return Option{
+			value: content,
+			err:   err,
 		}
-	}()
+	}
+	
+	err = r.Close()
 
 	return Option{
 		value: content,
