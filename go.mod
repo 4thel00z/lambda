@@ -1,6 +1,6 @@
 module github.com/4thel00z/lambda
 
-go 1.17
+go 1.19
 
 require github.com/charmbracelet/glamour v0.3.0
 
