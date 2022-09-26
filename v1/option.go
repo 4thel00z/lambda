@@ -249,3 +249,11 @@ func (o Option) WriteStringTo(w io.StringWriter) Option {
 		err:   err,
 	}
 }
+
+func (o Option) Map(transformer Transformer) Option {
+	return transformer(o)
+}
+
+func (o Option) Apply(producer Producer) interface{} {
+	return producer(o)
+}
