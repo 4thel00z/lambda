@@ -1,9 +1,10 @@
 module github.com/4thel00z/lambda/v2
 
-go 1.23
+go 1.24.0
 
 require (
 	github.com/charmbracelet/glamour v0.3.0
+	golang.org/x/sync v0.19.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
