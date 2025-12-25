@@ -103,6 +103,61 @@ func main() {
 }
 ```
 
+### Parallelism (multi-threading)
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"strings"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	ctx := context.Background()
+	words := []string{"a", "bb", "ccc"}
+
+	out := λ.ParMap(ctx, words, func(s string) string {
+		return strings.ToUpper(s)
+	}, λ.WithConcurrency(8)).Must()
+
+	fmt.Println(out) // [A BB CCC]
+}
+```
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	ctx := context.Background()
+	in := make(chan int)
+
+	out, errc := λ.ParMapChan(ctx, in, func(v int) int { return v * 2 }, λ.WithConcurrency(8))
+
+	go func() {
+		defer close(in)
+		for i := 0; i < 5; i++ {
+			in <- i
+		}
+	}()
+
+	for v := range out {
+		fmt.Println(v)
+	}
+	_ = <-errc // nil on success
+}
+```
+
 <details>
 <summary><strong>Show v1 examples</strong></summary>
 
