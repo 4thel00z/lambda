@@ -111,8 +111,6 @@ func main() {
 
 ## Examples
 
-Your original long-form examples are kept below (expanded + modernized README layout).
-
 <details>
 <summary><strong>Show examples</strong></summary>
 
@@ -137,21 +135,6 @@ func main() {
 }
 ```
 
-### Make REST calls
-
-```go
-package main
-
-import (
-	"os"
-
-	λ "github.com/4thel00z/lambda/v1"
-)
-
-func main() {
-	λ.Get("https://ransomware.host").Do().Slurp().WriteToWriter(os.Stdout)
-}
-```
 
 ### Simple AES-CBC encryption with PKCS7 padding
 
