@@ -27,13 +27,84 @@ Go already has great error handling, but sometimes you want to express flows as 
 
 ## Install
 
-Import the versioned package:
+
+### v2 (default)
+
+**λ v2 is a major rewrite** with generics + typed pipelines.
+
+- Import:
+
+```go
+import λ "github.com/4thel00z/lambda/v2"
+```
+
+- This is a **hard cut**: **no compatibility layer** and **no migration path** from `v1`.
+
+### v1 
+
+Import the default versioned package:
 
 ```go
 import λ "github.com/4thel00z/lambda/v1"
 ```
 
 ## Quickstart
+
+```go
+package main
+
+import (
+	"os"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	content := λ.Slurp(os.Stdin).String().Must()
+	_ = content
+}
+```
+
+```go
+package main
+
+import (
+	"context"
+	"os"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	λ.Get("https://example.com").
+		Do(context.Background()).
+		Slurp().
+		WriteToWriter(os.Stdout)
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+type MagicSpell struct {
+	Name  string `json:"name"`
+	Power int    `json:"power"`
+}
+
+func main() {
+	spell := λ.FromJSON[MagicSpell](λ.Open("magic.json").Slurp()).Must()
+	fmt.Println(spell.Name, spell.Power)
+}
+```
+
+<details>
+<summary><strong>Show v1 examples</strong></summary>
 
 ### Read all lines from stdin
 
@@ -108,11 +179,6 @@ func main() {
 	λ.Get("https://example.com").Do().Slurp().WriteToWriter(os.Stdout)
 }
 ```
-
-## Examples
-
-<details>
-<summary><strong>Show examples</strong></summary>
 
 ### Functional conditionals
 
@@ -278,6 +344,14 @@ See the runnable examples in [`example/`](example/). For instance:
 ```bash
 go run ./example/json
 go run ./example/http
+```
+
+v2 examples live in `v2/example/`:
+
+```bash
+go run ./v2/example/json
+go run ./v2/example/http
+go run ./v2/example/conditionals
 ```
 
 ## Development
