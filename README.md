@@ -140,21 +140,12 @@ import (
 
 func main() {
 	ctx := context.Background()
-	in := make(chan int)
-
+	in, inErrc := λ.RangeN(ctx, 5)
 	out, errc := λ.ParMapChan(ctx, in, func(v int) int { return v * 2 }, λ.WithConcurrency(8))
-
-	go func() {
-		defer close(in)
-		for i := 0; i < 5; i++ {
-			in <- i
-		}
-	}()
-
+	λ.Must(λ.JoinErr(inErrc, errc))
 	for v := range out {
 		fmt.Println(v)
 	}
-	_ = <-errc // nil on success
 }
 ```
 

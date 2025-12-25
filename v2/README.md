@@ -177,21 +177,40 @@ import (
 
 func main() {
 	ctx := context.Background()
-	in := make(chan int)
+	in, inErrc := λ.RangeN(ctx, 5)
 
 	out, errc := λ.ParMapChan(ctx, in, func(v int) int { return v * 2 }, λ.WithConcurrency(8))
-
-	go func() {
-		defer close(in)
-		for i := 0; i < 5; i++ {
-			in <- i
-		}
-	}()
 
 	for v := range out {
 		fmt.Println(v)
 	}
-	_ = <-errc // nil on success
+	_ = λ.JoinErr(inErrc, errc) // nil on success
+}
+```
+
+## Channel utilities
+
+Exporters like `RangeN` and transforms like `Take` let you build channel flows without boilerplate goroutines:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	ctx := context.Background()
+
+	src, srcErrc := λ.RangeN(ctx, 10)
+	first3, first3Errc := λ.Take(ctx, src, 3)
+
+	fmt.Println(λ.Collect(ctx, first3).Must()) // [0 1 2]
+	_ = <-srcErrc
+	_ = <-first3Errc
 }
 ```
 
