@@ -142,10 +142,44 @@ func main() {
 	ctx := context.Background()
 	in, inErrc := λ.RangeN(ctx, 5)
 	out, errc := λ.ParMapChan(ctx, in, func(v int) int { return v * 2 }, λ.WithConcurrency(8))
-	λ.Must(λ.JoinErr(inErrc, errc))
 	for v := range out {
 		fmt.Println(v)
 	}
+	λ.Must(λ.JoinErr(inErrc, errc))
+}
+```
+
+### Channel toolbox (full example)
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	λ "github.com/4thel00z/lambda/v2"
+)
+
+func main() {
+	ctx := context.Background()
+
+	// Export ints as a channel (no goroutine needed).
+	in, inErrc := λ.RangeN(ctx, 10)
+
+	// Peek at the first element while keeping a replaying stream.
+	first, replay, peekErrc := λ.Peek(ctx, in)
+	fmt.Println("first:", first.Must())
+
+	// Do parallel work on the stream.
+	out, mapErrc := λ.ParMapChan(ctx, replay, func(v int) int { return v * v }, λ.WithConcurrency(8))
+
+	// Collect results (drains the channel).
+	squares := λ.Collect(ctx, out).Must()
+	fmt.Println("squares:", squares)
+
+	// Wait for all producers to finish and surface errors once.
+	λ.Must(λ.JoinErr(inErrc, peekErrc, mapErrc))
 }
 ```
 

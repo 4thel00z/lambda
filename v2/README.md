@@ -205,12 +205,13 @@ import (
 func main() {
 	ctx := context.Background()
 
-	src, srcErrc := λ.RangeN(ctx, 10)
+	// Note: Take stops reading after N values, so use it with a source that will close
+	// (or cancel ctx to stop upstream producers).
+	src, srcErrc := λ.RangeN(ctx, 3)
 	first3, first3Errc := λ.Take(ctx, src, 3)
 
 	fmt.Println(λ.Collect(ctx, first3).Must()) // [0 1 2]
-	_ = <-srcErrc
-	_ = <-first3Errc
+	λ.Must(λ.JoinErr(srcErrc, first3Errc))
 }
 ```
 
