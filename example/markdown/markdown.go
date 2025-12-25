@@ -1,4 +1,4 @@
-///bin/sh -c true && exec /usr/bin/env go run "$0" "$@"
+// /bin/sh -c true && exec /usr/bin/env go run "$0" "$@"
 package main
 
 import (
@@ -21,7 +21,7 @@ Really dunno
 
 #### Emojis work too:👩
 #### Code aswell:
-`+"```"+ `
+` + "```" + `
 import "github.com/charmbracelet/glamour"
 
 r, _ := glamour.NewTermRenderer(
@@ -33,5 +33,5 @@ r, _ := glamour.NewTermRenderer(
 
 out, err := r.Render(in)
 fmt.Print(out)
-`+"```").WriteStringTo(os.Stdin)
+` + "```").WriteStringTo(os.Stdin)
 }

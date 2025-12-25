@@ -273,7 +273,7 @@ func DecryptWithPrivateKey(ciphertext []byte, key *rsa.PrivateKey) ([]byte, erro
 }
 
 // FingerprintSHA256 calculates the SHA256 fingerprint of the public key part of the RSAKeyPair
-func (o Option) FingerprintSHA256() string{
+func (o Option) FingerprintSHA256() string {
 	if o.err != nil {
 		log.Fatal(o.err)
 	}

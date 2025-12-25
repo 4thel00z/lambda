@@ -1,17 +1,39 @@
-# λ
+<div align="center">
+  <img src="logo.png" width="160" alt="lambda logo" />
 
-![lambda-tests](https://github.com/4thel00z/lambda/workflows/Test/badge.svg)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/4thel00z/lambda.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/4thel00z/lambda/alerts/)
-![lambda-logo](https://raw.githubusercontent.com/4thel00z/lambda/master/logo.png)
+  <h1>λ</h1>
 
-λ is a functional programming framework for go, which adds support for an alternative error handling workflow using options.
+  <p><strong>Functional programming helpers for Go</strong> — Option-based error handling and fluent pipelines.</p>
 
-## Notes
+  <p>
+    <a href="https://github.com/4thel00z/lambda/actions/workflows/run_go_tests.yml">
+      <img alt="CI" src="https://github.com/4thel00z/lambda/actions/workflows/run_go_tests.yml/badge.svg" />
+    </a>
+    <img alt="Go" src="https://img.shields.io/badge/go-1.23%2B-00ADD8.svg" />
+    <a href="COPYING">
+      <img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" />
+    </a>
+  </p>
+</div>
 
-This package requires at least a Go version of 1.6 to compile succesfully.
+## Why
 
-## Example usage
+Go already has great error handling, but sometimes you want to express flows as **pipelines** instead of nested `if err != nil` blocks.
+λ gives you an `Option` type (value + error) and a set of utilities that make those pipelines ergonomic.
 
+## Requirements
+
+- Go **1.23+** (this module tracks the `go` version in `go.mod`).
+
+## Install
+
+Import the versioned package:
+
+```go
+import λ "github.com/4thel00z/lambda/v1"
+```
+
+## Quickstart
 
 ### Read all lines from stdin
 
@@ -19,17 +41,15 @@ This package requires at least a Go version of 1.6 to compile succesfully.
 package main
 
 import (
-	"fmt"
-	λ "github.com/4thel00z/lambda/v1"
 	"os"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 func main() {
 	content := λ.Slurp(os.Stdin).UnwrapString()
-	// do things with content...
+	_ = content
 }
-
-
 ```
 
 ### Read a file and pipe it to stdout
@@ -38,12 +58,13 @@ func main() {
 package main
 
 import (
-	λ "github.com/4thel00z/lambda/v1"
 	"os"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 func main() {
-	λ.Open("lorem_ipsum.txt").Slurp().WriteString(os.Stdout)
+	λ.Open("lorem_ipsum.txt").Slurp().WriteToWriter(os.Stdout)
 }
 ```
 
@@ -53,9 +74,9 @@ func main() {
 package main
 
 import (
-	λ "github.com/4thel00z/lambda/v1"
-	"strings"
 	"fmt"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 type MagicSpell struct {
@@ -66,20 +87,34 @@ type MagicSpell struct {
 }
 
 func main() {
-	var (
-		m MagicSpell
-	)
+	var m MagicSpell
 	λ.Open("magic.json").Slurp().JSON(&m).Catch(λ.Die)
-
-    fmt.Println(strings.Join([]string{m.Name, m.Type, fmt.Sprintf("%f", m.AttackPower), m.Description}, "\n"))
-
-	// ToJSON() detects if the current value is a pointer or not
-	fmt.Println(λ.WrapValue(m).ToJSON().UnwrapString())
-	// Works even if you use the pointer operator again
-	fmt.Println(λ.WrapValue(&m).ToJSON().UnwrapString())
+	fmt.Printf("%s (%s) atk=%.2f\n%s\n", m.Name, m.Type, m.AttackPower, m.Description)
 }
-
 ```
+
+### Simple HTTP request
+
+```go
+package main
+
+import (
+	"os"
+
+	λ "github.com/4thel00z/lambda/v1"
+)
+
+func main() {
+	λ.Get("https://example.com").Do().Slurp().WriteToWriter(os.Stdout)
+}
+```
+
+## Examples
+
+Your original long-form examples are kept below (expanded + modernized README layout).
+
+<details>
+<summary><strong>Show examples</strong></summary>
 
 ### Functional conditionals
 
@@ -100,34 +135,35 @@ func main() {
 	output := λ.If(λ.HasError, manipulateError).Else(λ.Cry).Do(input)
 	λ.If(λ.HasNoError, λ.Identity).Else(λ.Cry).Do(output)
 }
-
 ```
 
-### Make Rest calls
+### Make REST calls
 
 ```go
 package main
 
 import (
-	λ "github.com/4thel00z/lambda/v1"
 	"os"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 func main() {
-	λ.Get("https://ransomware.host").Do().Slurp().WriteString(os.Stdout)
+	λ.Get("https://ransomware.host").Do().Slurp().WriteToWriter(os.Stdout)
 }
 ```
 
-### Simple AES-CBC encryption with PKC7 Padding
+### Simple AES-CBC encryption with PKCS7 padding
 
 ```go
 package main
 
 import (
 	"crypto/rand"
-	λ "github.com/4thel00z/lambda/v1"
 	"io"
 	"strings"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 var (
@@ -150,6 +186,7 @@ func getRandomKey() []byte {
 	}
 	return key
 }
+
 func main() {
 	key := getRandomKey()
 	if λ.Read(loremIpsumReader).EncryptAES(key).DecryptAES(key).UnwrapString() != loremIpsum {
@@ -165,7 +202,6 @@ func main() {
 			panic("encryption and decryption doesn't work")
 		}
 	}
-
 }
 ```
 
@@ -175,8 +211,9 @@ func main() {
 package main
 
 import (
-	λ "github.com/4thel00z/lambda/v1"
 	"log"
+
+	λ "github.com/4thel00z/lambda/v1"
 )
 
 func main() {
@@ -194,9 +231,7 @@ func main() {
 
 	// Use rsa.UnwrapPrivateKey() and rsa.UnwrapPublicKey() if you want to extract the raw key material
 	// You can load it via λ.LoadRSA(pub,priv)
-
 }
-
 ```
 
 ## How to generate a sha256 checksum
@@ -206,6 +241,7 @@ package main
 
 import (
 	"bytes"
+
 	λ "github.com/4thel00z/lambda/v1"
 )
 
@@ -228,47 +264,47 @@ func main() {
 }
 ```
 
-## How to render a markdown and print out to stdout
+## How to render markdown and print it to stdout
 
 ```go
 package main
 
 import (
+	"fmt"
+
 	λ "github.com/4thel00z/lambda/v1"
-	"os"
 )
 
 func main() {
-	λ.Markdown().Render(`# Markdown
+	out := λ.Markdown().Render(`# Markdown
 This is so awesome
 
 ## Why is this section so nice
-Really dunno
+Really dunno`).UnwrapString()
 
-### Omg, can do all the things
-* yeah
-* all
-* of
-* them
-
-#### Emojis work too:👩
-#### Code aswell:
-`+"```"+ `
-import "github.com/charmbracelet/glamour"
-
-r, _ := glamour.NewTermRenderer(
-    // detect background color and pick either the default dark or light theme
-    glamour.WithAutoStyle(),
-    // wrap output at specific width
-    glamour.WithWordWrap(40),
-)
-
-out, err := r.Render(in)
-fmt.Print(out)
-`+"```").WriteStringTo(os.Stdin)
+	fmt.Print(out)
 }
+```
+
+</details>
+
+### Runnable examples
+
+See the runnable examples in [`example/`](example/). For instance:
+
+```bash
+go run ./example/json
+go run ./example/http
+```
+
+## Development
+
+```bash
+go test ./...
+go vet ./...
+gofmt -w .
 ```
 
 ## License
 
-This project is licensed under the GPL-3 license.
+GPL-3.0 — see [`COPYING`](COPYING).

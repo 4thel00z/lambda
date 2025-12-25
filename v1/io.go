@@ -2,19 +2,18 @@ package v1
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 )
 
 func Slurp(r io.ReadCloser) Option {
-	content, err := ioutil.ReadAll(r)
+	content, err := io.ReadAll(r)
 	if err != nil {
 		return Option{
 			value: content,
 			err:   err,
 		}
 	}
-	
+
 	err = r.Close()
 
 	return Option{
@@ -24,7 +23,7 @@ func Slurp(r io.ReadCloser) Option {
 }
 
 func Read(r io.Reader) Option {
-	content, err := ioutil.ReadAll(r)
+	content, err := io.ReadAll(r)
 	return Option{
 		value: content,
 		err:   err,

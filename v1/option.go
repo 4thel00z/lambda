@@ -213,12 +213,26 @@ func (o Option) WriteFromString(toWrite string) Option {
 	}
 }
 
-func (o Option) WriteTo(w io.Writer) Option {
-	_, err := w.Write(o.UnwrapBytes())
-	return Option{
-		value: o.value,
-		err:   err,
+// WriteTo implements io.WriterTo for Options that contain a []byte value.
+// This makes Option compatible with io.Copy and avoids go vet complaints about
+// stdlib method names with non-standard signatures.
+func (o Option) WriteTo(w io.Writer) (int64, error) {
+	if o.err != nil {
+		return 0, o.err
 	}
+	b, ok := o.value.([]byte)
+	if !ok {
+		return 0, errors.New("option is not []byte")
+	}
+	n, err := w.Write(b)
+	return int64(n), err
+}
+
+// WriteToWriter preserves the previous chain-friendly behavior of WriteTo.
+func (o Option) WriteToWriter(w io.Writer) Option {
+	n, err := o.WriteTo(w)
+	_ = n
+	return Wrap(o.value, err)
 }
 
 func (o Option) CopyToWriter(w io.Writer) Option {

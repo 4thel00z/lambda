@@ -1,8 +1,11 @@
 module github.com/4thel00z/lambda
 
-go 1.19
+go 1.23
 
-require github.com/charmbracelet/glamour v0.3.0
+require (
+	github.com/charmbracelet/glamour v0.3.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/alecthomas/chroma v0.8.2 // indirect
@@ -22,5 +25,4 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
 	golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c // indirect
 	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
